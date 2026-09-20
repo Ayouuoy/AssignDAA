@@ -1,29 +1,25 @@
 import java.util.Random;
 
-public final class QuickSort {
+public class QuickSort {
 
-    private QuickSort() {
-    }
-
-    public static void sort(
-            int[] a,
-            Metrics metrics
-    ) {
+    public static void sort(int[] a, Metrics metrics) {
 
         metrics.reset();
         metrics.start();
 
         if (a.length > 1) {
 
-            int[] equalRange = new int[2];
+            Random random = new Random();
+
+            int[] range = new int[2];
 
             quickSort(
                     a,
                     0,
                     a.length - 1,
                     metrics,
-                    new Random(),
-                    equalRange,
+                    random,
+                    range,
                     1
             );
         }
@@ -33,66 +29,66 @@ public final class QuickSort {
 
     private static void quickSort(
             int[] a,
-            int lo,
-            int hi,
+            int left,
+            int right,
             Metrics metrics,
             Random random,
-            int[] equalRange,
+            int[] range,
             int depth
     ) {
 
-        while (lo < hi) {
+        while (left < right) {
 
             metrics.recordDepth(depth);
 
             Partition3Way.partition(
                     a,
-                    lo,
-                    hi,
+                    left,
+                    right,
                     metrics,
                     random,
-                    equalRange
+                    range
             );
 
-            int lt = equalRange[0];
-            int gt = equalRange[1];
+            int lt = range[0];
+            int gt = range[1];
 
-            int leftSize = lt - lo;
-            int rightSize = hi - gt;
+            int leftSize = lt - left;
+            int rightSize = right - gt;
 
             if (leftSize < rightSize) {
 
-                if (leftSize > 1) {
+                if (left < lt - 1) {
 
                     quickSort(
                             a,
-                            lo,
+                            left,
                             lt - 1,
                             metrics,
                             random,
-                            equalRange,
+                            range,
                             depth + 1
                     );
                 }
 
-                lo = gt + 1;
+                left = gt + 1;
 
             } else {
 
-                if (rightSize > 1) {
+                if (gt + 1 < right) {
 
                     quickSort(
                             a,
                             gt + 1,
-                            hi,
+                            right,
                             metrics,
                             random,
-                            equalRange,
+                            range,
                             depth + 1
                     );
                 }
 
-                hi = lt - 1;
+                right = lt - 1;
             }
         }
     }

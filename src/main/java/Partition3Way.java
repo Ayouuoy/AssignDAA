@@ -1,27 +1,24 @@
 import java.util.Random;
 
-final class Partition3Way {
+public class Partition3Way {
 
-    private Partition3Way() {
-    }
-
-    static void partition(
+    public static void partition(
             int[] a,
-            int lo,
-            int hi,
+            int left,
+            int right,
             Metrics metrics,
             Random random,
-            int[] equalRange
+            int[] range
     ) {
 
         int pivotIndex =
-                lo + random.nextInt(hi - lo + 1);
+                left + random.nextInt(right - left + 1);
 
         int pivot = a[pivotIndex];
 
-        int lt = lo;
-        int i = lo;
-        int gt = hi;
+        int lt = left;
+        int i = left;
+        int gt = right;
 
         while (i <= gt) {
 
@@ -50,15 +47,11 @@ final class Partition3Way {
             }
         }
 
-        equalRange[0] = lt;
-        equalRange[1] = gt;
+        range[0] = lt;
+        range[1] = gt;
     }
 
-    private static void swap(
-            int[] a,
-            int i,
-            int j
-    ) {
+    private static void swap(int[] a, int i, int j) {
 
         int temp = a[i];
         a[i] = a[j];

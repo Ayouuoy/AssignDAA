@@ -1,9 +1,6 @@
-public final class MergeSort {
+public class MergeSort {
 
     private static final int CUTOFF = 15;
-
-    private MergeSort() {
-    }
 
     public static void sort(int[] a, Metrics metrics) {
 
@@ -13,14 +10,7 @@ public final class MergeSort {
         int[] buffer = new int[a.length];
 
         if (a.length > 0) {
-            mergeSort(
-                    a,
-                    buffer,
-                    0,
-                    a.length - 1,
-                    metrics,
-                    1
-            );
+            mergeSort(a, buffer, 0, a.length - 1, metrics, 1);
         }
 
         metrics.stop();
@@ -29,105 +19,93 @@ public final class MergeSort {
     private static void mergeSort(
             int[] a,
             int[] buffer,
-            int lo,
-            int hi,
+            int left,
+            int right,
             Metrics metrics,
             int depth
     ) {
 
         metrics.recordDepth(depth);
 
-        if (lo >= hi) {
+        if (left >= right) {
             return;
         }
 
-        if (hi - lo + 1 <= CUTOFF) {
-
-            InsertionSort.sortRange(
-                    a,
-                    lo,
-                    hi,
-                    metrics
-            );
-
+        if (right - left + 1 <= CUTOFF) {
+            insertionSort(a, left, right, metrics);
             return;
         }
 
-        int mid = lo + (hi - lo) / 2;
+        int mid = left + (right - left) / 2;
 
-        mergeSort(
-                a,
-                buffer,
-                lo,
-                mid,
-                metrics,
-                depth + 1
-        );
+        mergeSort(a, buffer, left, mid, metrics, depth + 1);
+        mergeSort(a, buffer, mid + 1, right, metrics, depth + 1);
 
-        mergeSort(
-                a,
-                buffer,
-                mid + 1,
-                hi,
-                metrics,
-                depth + 1
-        );
+        merge(a, buffer, left, mid, right, metrics);
+    }
 
-        merge(
-                a,
-                buffer,
-                lo,
-                mid,
-                hi,
-                metrics
-        );
+    private static void insertionSort(
+            int[] a,
+            int left,
+            int right,
+            Metrics metrics
+    ) {
+
+        for (int i = left + 1; i <= right; i++) {
+
+            int value = a[i];
+            int j = i - 1;
+
+            while (j >= left) {
+
+                metrics.comparison();
+
+                if (a[j] <= value) {
+                    break;
+                }
+
+                a[j + 1] = a[j];
+                j--;
+            }
+
+            a[j + 1] = value;
+        }
     }
 
     private static void merge(
             int[] a,
             int[] buffer,
-            int lo,
+            int left,
             int mid,
-            int hi,
+            int right,
             Metrics metrics
     ) {
 
-        for (int i = lo; i <= hi; i++) {
+        for (int i = left; i <= right; i++) {
             buffer[i] = a[i];
         }
 
-        int left = lo;
-        int right = mid + 1;
-        int current = lo;
+        int i = left;
+        int j = mid + 1;
+        int k = left;
 
-        while (left <= mid && right <= hi) {
+        while (i <= mid && j <= right) {
 
             metrics.comparison();
 
-            if (buffer[left] <= buffer[right]) {
-
-                a[current] = buffer[left];
-                left++;
-
+            if (buffer[i] <= buffer[j]) {
+                a[k++] = buffer[i++];
             } else {
-
-                a[current] = buffer[right];
-                right++;
+                a[k++] = buffer[j++];
             }
-
-            current++;
         }
 
-        while (left <= mid) {
-            a[current] = buffer[left];
-            current++;
-            left++;
+        while (i <= mid) {
+            a[k++] = buffer[i++];
         }
 
-        while (right <= hi) {
-            a[current] = buffer[right];
-            current++;
-            right++;
+        while (j <= right) {
+            a[k++] = buffer[j++];
         }
     }
 }

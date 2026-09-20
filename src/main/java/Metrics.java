@@ -3,13 +3,12 @@ public class Metrics {
     private long comparisons;
     private int maxDepth;
     private long startTime;
-    private long elapsedNanos;
+    private long elapsedTime;
 
     public void reset() {
         comparisons = 0;
         maxDepth = 0;
-        startTime = 0;
-        elapsedNanos = 0;
+        elapsedTime = 0;
     }
 
     public void start() {
@@ -17,7 +16,7 @@ public class Metrics {
     }
 
     public void stop() {
-        elapsedNanos = System.nanoTime() - startTime;
+        elapsedTime = System.nanoTime() - startTime;
     }
 
     public void comparison() {
@@ -39,6 +38,6 @@ public class Metrics {
     }
 
     public double getTimeMs() {
-        return elapsedNanos / 1_000_000.0;
+        return elapsedTime / 1_000_000.0;
     }
 }
